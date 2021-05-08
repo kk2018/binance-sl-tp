@@ -53,6 +53,12 @@ def handle_message(msg):
                                                                       msg['p'],
                                                                       msg['q'],
                                                                       bitcoins_exchanged))
+        if _activate_price and msg['p'] == _activate_price:
+            send_sl_tp_orders()
+        if msg['p'] == _stop_limit_price:
+            cancel_order(_take_profit_order['orderId'])
+        if msg['p'] == _take_profit_price:
+            cancel_order(_stop_limit_order['orderId'])
 
 
 def sl_tp_order(symbol, quantity, activate_price, stop_limit_price, take_profit_price):
@@ -67,3 +73,14 @@ def sl_tp_order(symbol, quantity, activate_price, stop_limit_price, take_profit_
 
     # then start the socket manager
     bm.start()
+
+
+def send_sl_tp_orders():
+    _stop_limit_order = client.futures_create_order(symbol=_symbol, side='BUY',
+                                                    type='STOP_MARKET ', quantity=quantity, stopPrice=_stop_limit_price)
+    _take_profit_order = client.futures_create_order(symbol=_symbol, side='BUY',
+                                                     type='TAKE_PROFIT ', quantity=quantity, stopPrice=_take_profit_price)
+
+
+def cancel_order(order_id):
+    client.futures_cancel_order(order_id)
