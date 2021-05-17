@@ -11,17 +11,17 @@ class FuturesSlTpOrder:
         activate_price,
         stop_limit_price,
         take_profit_price,
-        quantity,
+        quantity_in_usdt,
     ):
         self._client = client
         self._symbol = symbol
         self._activate_price = activate_price
         self._stop_limit_price = stop_limit_price
         self._take_profit_price = take_profit_price
-        self._quantity = quantity
+        self._quantity = quantity_in_usdt / activate_price
         self._stop_limit_order = None
         self._take_profit_order = None
-        self._ws = FuturesWebsockets(client)
+        self._ws = FuturesWebsockets(self._client)
 
     def handle_message(self, msg):
         msg = msg["data"]
