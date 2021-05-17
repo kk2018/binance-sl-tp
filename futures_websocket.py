@@ -1,7 +1,7 @@
 # coding=utf-8
 import threading
 from binance.client import Client
-from binance import BinanceSocketManager
+from binance.websockets import BinanceSocketManager
 
 
 class FuturesClient(Client):
