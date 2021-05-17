@@ -53,11 +53,11 @@ class FuturesSlTpOrder:
                     bitcoins_exchanged,
                 )
             )
-            if self._activate_price and msg["p"] == self._activate_price:
+            if self._activate_price and int(float(msg["p"])) == self._activate_price:
                 self.send_sl_tp_orders()
-            if msg["p"] <= self._stop_limit_price:
+            if self._stop_limit_order and int(float(msg["p"])) <= self._stop_limit_price:
                 self.cancel_sl_tp_order(self._take_profit_order["orderId"])
-            if msg["p"] >= self._take_profit_price:
+            if self._take_profit_order and int(float(msg["p"])) >= self._take_profit_price:
                 self.cancel_sl_tp_order(self._stop_limit_order["orderId"])
 
     def start_order(self):
