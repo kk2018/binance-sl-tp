@@ -28,9 +28,9 @@ def main():
     order = FuturesSlTpOrder(
         client=client,
         symbol="BTCUSDT",
-        activate_price=42800,
-        take_profit_price=42810,
-        stop_limit_price=42790,
+        activate_price=40000,
+        take_profit_price=40100,
+        stop_limit_price=39980,
         quantity_in_usdt=10,
     )
 
