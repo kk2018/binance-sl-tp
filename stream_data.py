@@ -18,10 +18,18 @@ class FuturesSlTpOrder:
         self._activate_price = activate_price
         self._stop_limit_price = stop_limit_price
         self._take_profit_price = take_profit_price
-        self._quantity = quantity_in_usdt / activate_price
+        self._quantity = self.calculate_quantity(quantity_in_usdt)
         self._stop_limit_order = None
         self._take_profit_order = None
         self._ws = FuturesWebsockets(self._client)
+
+    def calculate_quantity(self,quantity_in_usdt):
+        info = self._client.futures_exchange_info()
+        symbols_n_precision={}
+        for item in info['symbols']: 
+            symbols_n_precision[item['symbol']] = item['quantityPrecision']
+        precision = symbols_n_precision[self._symbol]
+        return float(round(quantity_in_usdt / self._price, 3))
 
     def handle_message(self, msg):
         msg = msg["data"]
