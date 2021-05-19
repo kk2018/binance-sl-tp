@@ -9,6 +9,7 @@ class FuturesSlTpOrder:
         client,
         symbol,
         activate_price,
+        price,
         stop_limit_price,
         take_profit_price,
         quantity_in_usdt,
@@ -16,6 +17,7 @@ class FuturesSlTpOrder:
         self._client = client
         self._symbol = symbol
         self._activate_price = activate_price
+        self._price = price
         self._stop_limit_price = stop_limit_price
         self._take_profit_price = take_profit_price
         self._quantity = self.calculate_quantity(quantity_in_usdt)
@@ -61,14 +63,19 @@ class FuturesSlTpOrder:
                     bitcoins_exchanged,
                 )
             )
+            if self._activate_price and int(float(msg["p"])) == self._activate_price:
+                self.send_sl_tp_orders()
+
             if self._stop_limit_order and int(float(msg["p"])) <= self._stop_limit_price:
                 self.cancel_sl_tp_order(self._take_profit_order["orderId"])
+
             if self._take_profit_order and int(float(msg["p"])) >= self._take_profit_price:
                 self.cancel_sl_tp_order(self._stop_limit_order["orderId"])
 
     def start_order(self):
         # start any sockets here, i.e a trade socket
-        self.send_sl_tp_orders()
+        orderId = "8389765497774189430"
+        self.cancel_sl_tp_order(orderId)
         conn_key = self._ws.start_aggtrade_futures_socket(
             self._symbol, self.handle_message
         )
@@ -83,20 +90,28 @@ class FuturesSlTpOrder:
 
     def send_sl_tp_orders(self):
         print("send Orders")
+        self._client.futures_create_order(
+            symbol=self._symbol,
+            price=self._price,
+            side="BUY",
+            type="MARKET",
+            quantity=self._quantity,
+            timeInForce='GTC'
+        )
         self._stop_limit_order = self._client.futures_create_order(
             symbol=self._symbol,
-            price=self._activate_price,
-            side="BUY",
-            type="STOP_MARKET ",
+            price=self._price,
+            side="SELL",
+            type="STOP",
             quantity=self._quantity,
             stopPrice=self._stop_limit_price,
             timeInForce='GTC'
         )
         self._take_profit_order = self._client.futures_create_order(
             symbol=self._symbol,
-            price=self._activate_price,
-            side="BUY",
-            type="TAKE_PROFIT ",
+            price=self._price,
+            side="SELL",
+            type="TAKE_PROFIT",
             quantity=self._quantity,
             stopPrice=self._take_profit_price,
             timeInForce='GTC'
