@@ -103,5 +103,5 @@ class FuturesSlTpOrder:
         )
 
     def cancel_sl_tp_order(self, order_id):
-        self._client.futures_cancel_order(order_id)
         print("cancel Order:", order_id)
+        self._client.futures_cancel_order(symbol=self._symbol, orderId=order_id)
