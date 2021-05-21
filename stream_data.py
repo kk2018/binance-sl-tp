@@ -74,8 +74,6 @@ class FuturesSlTpOrder:
 
     def start_order(self):
         # start any sockets here, i.e a trade socket
-        orderId = "8389765497774189430"
-        self.cancel_sl_tp_order(orderId)
         conn_key = self._ws.start_aggtrade_futures_socket(
             self._symbol, self.handle_message
         )
