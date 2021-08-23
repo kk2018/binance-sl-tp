@@ -1,1 +1,1 @@
-Binance SL/TP futores order in python-binance
+Binance SL/TP futures order in python-binance
